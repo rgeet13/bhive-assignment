@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
 import Dashboard from './components/Dashboard';
+import './index.css';
 
 const PrivateRoute = ({ element }) => {
   const isLoggedIn = localStorage.getItem('access_token') !== null;
