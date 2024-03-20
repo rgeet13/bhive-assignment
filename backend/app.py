@@ -6,8 +6,24 @@ import httpx
 import uvicorn
 import jwt
 from datetime import datetime, timedelta
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "http://localhost",
+    "http://localhost:5173",
+    "http://localhost:8000",
+    # Add more allowed origins as needed
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"],
+)
 
 # Load environment variables
 env = dotenv_values(".env")
@@ -34,7 +50,7 @@ def create_access_token(data: dict):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm="HS256")
     return encoded_jwt
 
-@app.post("/token")
+@app.post("/token/")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     """Endpoint to generate a new JWT token."""
     username = form_data.username
