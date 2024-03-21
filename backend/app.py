@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Body
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from dotenv import dotenv_values
 from typing import List, Optional
@@ -97,6 +97,20 @@ async def fetch_fund_family_data():
     async with httpx.AsyncClient() as client:
         response = await client.get(url, headers=headers)
         return response.json()
+
+@app.post("/api/buy-purchase/")
+async def buy_purchase(data: dict = Body(...), token: str = Depends(oauth2_scheme)):
+    """Protected endpoint to initiate a buy purchase."""
+    # Ensure the user is authenticated
+    if not token:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    # Extract the scheme code and scheme name from the request body
+    scheme_code = data.get("schemeCode")
+    scheme_name = data.get("SchemeName")
+
+    return {"message": f"Buy purchase initiated for scheme code {scheme_code} - {scheme_name}"}
+
 if __name__ == "__main__":
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
